@@ -38,12 +38,13 @@ module Net
       result = old_request(*args, &block)
       end_time = Time.now
 
-      unless started? || @logger_options[:verbose]
+      # unless started? || @logger_options[:verbose]
+      unless started?
 
         self.class.http_logger.info "PARAMS #{CGI.parse(args[0].body).inspect[0..@params_limit]} " if args[0].body && req != 'CONNECT'
-        self.class.http_logger.info "TRACE: #{caller.reverse}" if @logger_options[:trace]
+        # self.class.http_logger.info "TRACE: #{caller.reverse}" if @logger_options[:trace]
         self.class.http_logger.info "TIME: #{end_time-start_time}"
-        self.class.http_logger.info "BODY: #{(@logger_options[:body] ? result.body : result.class.name)[0..@body_limit]}"
+        # self.class.http_logger.info "BODY: #{(@logger_options[:body] ? result.body : result.class.name)[0..@body_limit]}"
       end
       result
     end
