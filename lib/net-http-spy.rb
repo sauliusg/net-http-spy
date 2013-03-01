@@ -20,7 +20,7 @@ module Net
       @logger_options = defaults.merge(self.class.http_logger_options)
       @params_limit = @logger_options[:params_limit] || @logger_options[:limit]
       @body_limit   = @logger_options[:body_limit]   || @logger_options[:limit]
-      
+
       self.class.http_logger.info "CONNECT: #{args.inspect}" if !@logger_options[:verbose]
 
       old_initialize(*args, &block)
@@ -34,11 +34,15 @@ module Net
         self.class.http_logger.info "#{req} #{args[0].path}"
       end
 
+      start_time = Time.now
       result = old_request(*args, &block)
+      end_time = Time.now
+
       unless started? || @logger_options[:verbose]
 
         self.class.http_logger.info "PARAMS #{CGI.parse(args[0].body).inspect[0..@params_limit]} " if args[0].body && req != 'CONNECT'
         self.class.http_logger.info "TRACE: #{caller.reverse}" if @logger_options[:trace]
+        self.class.http_logger.info "TIME: #{end_time-start_time}"
         self.class.http_logger.info "BODY: #{(@logger_options[:body] ? result.body : result.class.name)[0..@body_limit]}"
       end
       result
